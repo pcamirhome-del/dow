@@ -1,0 +1,13 @@
+{
+  "functions": {
+    "app/api/extract/route.ts": {
+      "maxDuration": 30
+    },
+    "app/api/stream/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/speedtest/route.ts": {
+      "maxDuration": 30
+    }
+  }
+}

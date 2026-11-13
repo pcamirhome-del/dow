@@ -1,0 +1,8 @@
+{
+  "name": "SaveBox",
+  "description": "Local-first Progressive Web App for downloading videos (144p to 4K) and MP3 audio from YouTube, Facebook, Instagram, TikTok, and X.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

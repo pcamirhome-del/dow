@@ -1,0 +1,41 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --accent-primary: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-soft: rgba(37, 99, 235, 0.12);
+  --accent-text: #2563eb;
+}
+
+.dark {
+  --accent-primary: #38bdf8;
+  --accent-hover: #0ea5e9;
+  --accent-soft: rgba(56, 189, 248, 0.14);
+  --accent-text: #38bdf8;
+}
+
+[data-accent="emerald"] {
+  --accent-primary: #059669;
+  --accent-hover: #047857;
+  --accent-soft: rgba(5, 150, 105, 0.14);
+  --accent-text: #10b981;
+}
+
+[data-accent="amber"] {
+  --accent-primary: #d97706;
+  --accent-hover: #b45309;
+  --accent-soft: rgba(217, 119, 6, 0.14);
+  --accent-text: #f59e0b;
+}
+
+[data-accent="crimson"] {
+  --accent-primary: #dc2626;
+  --accent-hover: #b91c1c;
+  --accent-soft: rgba(220, 38, 38, 0.14);
+  --accent-text: #ef4444;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}

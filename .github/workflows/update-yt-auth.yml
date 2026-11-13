@@ -1,0 +1,73 @@
+name: Rotate YouTube Auth Credentials on Vercel
+
+on:
+  schedule:
+    # Run automatically every 5 days at 03:00 UTC
+    - cron: '0 3 */5 * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Extract credentials without pushing to Vercel (--dry-run)'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: youtube-auth-rotation
+  cancel-in-progress: true
+
+jobs:
+  rotate-youtube-auth:
+    name: Extract & Sync YouTube Credentials
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install project dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Cache Playwright Chromium binaries
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-chromium-${{ runner.os }}-${{ hashFiles('package.json', 'package-lock.json') }}
+
+      - name: Install Playwright & headless Chromium
+        run: |
+          npm install --no-save playwright
+          if [ "${{ steps.playwright-cache.outputs.cache-hit }}" != "true" ]; then
+            npx playwright install chromium --with-deps
+          else
+            npx playwright install-deps chromium
+          fi
+
+      - name: Extract YouTube Cookies/VisitorData/PO Token & Update Vercel Env
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
+          VERCEL_DEPLOY_HOOK_URL: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+          VERCEL_ENV_TARGETS: production,preview,development
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            node scripts/youtube-auth-updater.js --dry-run
+          else
+            node scripts/youtube-auth-updater.js
+          fi
